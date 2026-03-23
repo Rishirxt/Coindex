@@ -1,7 +1,6 @@
 <div align="center">
 
-# ⚡ Zync
-
+# ⚡ Coindex
 **A real-time cryptocurrency dashboard built with Next.js 16 and React 19.**
 
 Track live prices, candlestick charts, trending coins, market categories, and convert between currencies — all in a dark-first, responsive UI.
