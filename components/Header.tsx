@@ -69,7 +69,7 @@ export default function Header() {
         {/* Left */}
         <div className="flex-1 relative z-50">
           <Link href="/" className="logo-text text-xl hover:opacity-80 transition-opacity">
-            ZYNC
+            COINDEX
           </Link>
         </div>
 

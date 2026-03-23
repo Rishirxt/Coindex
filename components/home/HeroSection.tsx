@@ -265,7 +265,7 @@ export default function HeroSection({ markets, trendingList }: { markets: any[],
                     className="text-white font-display font-black whitespace-nowrap"
                     style={{ fontSize: 'clamp(8rem, 25vw, 22rem)', opacity: 0.025, letterSpacing: '-0.04em', lineHeight: 1 }}
                 >
-                    ZYNC
+                    COINDEX
                 </span>
             </div>
 

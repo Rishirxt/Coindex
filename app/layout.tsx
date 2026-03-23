@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zync",
-  description: "Zync is a high-performance, real-time cryptocurrency screener and dashboard designed for traders and developers who need instant market clarity",
+  title: "Coindex",
+  description: "Coindex is a high-performance, real-time cryptocurrency screener and dashboard designed for traders and developers who need instant market clarity",
 };
 
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
