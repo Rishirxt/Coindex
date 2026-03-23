@@ -1,192 +1,127 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
+
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { fetcher } from '@/lib/coingecko.actions'
-import { Search, Menu, X } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Search } from 'lucide-react'
+import { RefreshButton } from '@/components/ui/RefreshButton'
 
-import { ThemeToggle } from './ThemeToggle'
-import CurrencySwitcher from '@/components/layout/CurrencySwitcher'
+interface SearchCoin {
+  id: string
+  name: string
+  symbol: string
+  thumb: string
+  large: string
+}
 
-const Header = () => {
-  const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchCoin[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + K or / to search
-      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName))) {
-        e.preventDefault()
-        setOpen(true)
-      }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+export default function Header() {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<SearchCoin[]>([])
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const searchCoins = async () => {
-      if (query.trim().length === 0) {
-        setResults([]);
-        return;
+      if (!query.trim()) {
+        setResults([])
+        return
       }
-      setLoading(true);
+      setLoading(true)
       try {
-        const response = await fetcher<{ coins: SearchCoin[] }>('/search', { query });
-        setResults(response.coins || []);
-      } catch (error) {
-        console.error(error);
+        const url = new URL('https://api.coingecko.com/api/v3/search')
+        url.searchParams.set('query', query)
+        const res = await fetch(url.toString())
+        const data = await res.json()
+        setResults(data.coins?.slice(0, 10) || [])
+      } catch (e) {
+        console.error(e)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
+    const t = setTimeout(searchCoins, 300)
+    return () => clearTimeout(t)
+  }, [query])
 
-    const debounceTimer = setTimeout(searchCoins, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [query]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        setQuery('')
+      }
+    }
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/10 bg-background/80 backdrop-blur-xl transition-all duration-300">
-      <div className="main-container inner flex items-center justify-between py-4">
-        <Link href="/" className="z-50 logo-text">
-          ZYNC
-        </Link>
-        
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href='/' className={cn('nav-link', {
-            'is-active': pathname === '/',
-            'is-home': true
-          })}>Home</Link>
-
-          <SearchDialog open={open} onOpenChange={setOpen} query={query} setQuery={setQuery} loading={loading} results={results} />
-
-          <Link href="/coins" className={cn('nav-link', { 'is-active': pathname === '/coins' })}>All Coins</Link>
-          <CurrencySwitcher />
-          <ThemeToggle />
-        </nav>
-
-        {/* Mobile Nav Trigger */}
-        <div className="flex md:hidden items-center gap-4">
-          <button 
-            onClick={() => setOpen(true)}
-            className="p-2 text-purple-100/50 hover:text-purple-100"
-            aria-label="Search"
-          >
-            <Search size={22} />
-          </button>
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-purple-100/50 hover:text-purple-100 z-50"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+    <header className="sticky top-0 z-40 bg-[#030712]/80 backdrop-blur-md border-b border-white/5 h-16">
+      <div className="flex items-center justify-between px-4 h-full max-w-7xl mx-auto">
+        {/* Left */}
+        <div className="flex-1 relative z-50">
+          <Link href="/" className="logo-text text-xl hover:opacity-80 transition-opacity">
+            ZYNC
+          </Link>
         </div>
-      </div>
 
-      {/* Mobile Menu Drawer */}
-      <div className={cn(
-        "fixed inset-0 z-40 bg-dark-400 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-24 px-6 gap-8",
-        isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-      )}>
-        <Link 
-          href="/" 
-          onClick={() => setIsMobileMenuOpen(false)}
-          className={cn("text-2xl font-bold", pathname === '/' ? "text-purple-400" : "text-purple-100/70")}
-        >
-          Home
-        </Link>
-        <Link 
-          href="/coins" 
-          onClick={() => setIsMobileMenuOpen(false)}
-          className={cn("text-2xl font-bold", pathname === '/coins' ? "text-purple-400" : "text-purple-100/70")}
-        >
-          All Coins
-        </Link>
-        <div className="flex flex-col gap-6 mt-4 border-t border-purple-100/10 pt-8">
-          <div className="flex items-center justify-between">
-            <span className="text-purple-100/50">Currency</span>
-            <CurrencySwitcher />
+        {/* Center: Search */}
+        <div className="flex-1 max-w-md w-full z-50 relative" ref={searchRef}>
+          <div className="relative flex items-center w-full h-10 rounded-full bg-white/5 border border-white/10 px-3 transition-colors focus-within:border-primary focus-within:bg-white/10 hover:border-white/20">
+            <Search size={16} className="text-white/40 mr-2 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search coins..."
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value)
+                setOpen(true)
+              }}
+              onFocus={() => setOpen(true)}
+              className="w-full bg-transparent border-none outline-none text-sm text-white placeholder-white/40"
+            />
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-purple-100/50">Theme</span>
-            <ThemeToggle />
-          </div>
+
+          {/* Dropdown menu */}
+          {open && (query.trim().length > 0) && (
+            <div className="absolute top-full mt-2 left-0 right-0 glass-card max-h-[400px] overflow-y-auto p-2 shadow-2xl">
+              {loading && <div className="text-white/50 text-xs text-center p-4">Loading...</div>}
+              {!loading && results.length === 0 && (
+                <div className="text-white/50 text-xs text-center p-4">No results found.</div>
+              )}
+              {!loading && results.map((coin) => (
+                <Link
+                  key={coin.id}
+                  href={`/coins/${coin.id}`}
+                  onClick={() => {
+                    setOpen(false)
+                    setQuery('')
+                  }}
+                  className="flex items-center gap-3 p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <img src={coin.thumb} alt={coin.name} className="w-5 h-5 rounded-full" />
+                  <span className="text-sm font-medium text-white">{coin.name}</span>
+                  <span className="text-xs text-white/50">{coin.symbol}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right */}
+        <div className="flex-1 flex justify-end items-center gap-4 relative z-50">
+          <RefreshButton />
+          <span className="text-[11px] text-white/30 hidden sm:inline">Powered by CoinGecko</span>
         </div>
       </div>
     </header>
   )
 }
-
-// Extract SearchDialog to keep Header clean
-const SearchDialog = ({ open, onOpenChange, query, setQuery, loading, results }: any) => {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <button 
-          className="flex items-center gap-2 px-4 py-2 bg-dark-400 border border-purple-100/10 rounded-lg text-purple-100/50 hover:text-purple-100 transition-colors"
-          aria-label="Search coins (shortcut: /)"
-        >
-          <Search size={16} />
-          <span className="text-sm">Search</span>
-          <kbd className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-purple-100/10 bg-dark-400 px-1.5 font-mono text-[10px] font-medium text-purple-100/50">
-            <span className="text-xs">/</span>
-          </kbd>
-        </button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-xl bg-dark-400 border-purple-100/10 text-purple-100 rounded-xl!">
-        <DialogHeader>
-          <DialogTitle className="sr-only">Search Coins</DialogTitle>
-        </DialogHeader>
-        <div className="flex items-center border-b border-purple-100/10 pb-4 pt-2">
-          <Search className="mr-3 h-5 w-5 text-purple-100/50 shrink-0" />
-          <input
-            className="flex h-11 w-full rounded-md bg-transparent text-base outline-none placeholder:text-purple-100/50"
-            placeholder="Search for a coin..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus
-            aria-label="Search coin input"
-          />
-        </div>
-        <div className="max-h-[300px] overflow-y-auto custom-scrollbar mt-2 pr-2">
-          {loading && <div className="text-center text-purple-100/50 py-8 text-sm">Searching...</div>}
-          {!loading && query.length > 0 && results.length === 0 && (
-            <div className="text-center text-purple-100/50 py-8 text-sm">No results found.</div>
-          )}
-          {!loading && results.map((coin: SearchCoin) => (
-            <Link
-              key={coin.id}
-              href={`/coins/${coin.id}`}
-              onClick={() => onOpenChange(false)}
-              className="flex items-center gap-4 p-3 hover:bg-white/5 rounded-lg transition-colors border-b border-purple-100/5 last:border-0"
-              aria-label={`View ${coin.name}`}
-            >
-              <Image src={coin.large} alt={coin.name} width={32} height={32} className="rounded-full shrink-0" />
-              <div className="flex flex-col">
-                <span className="font-medium text-sm text-white">{coin.name}</span>
-                <span className="text-xs text-purple-100/50 uppercase">{coin.symbol}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-export default Header;

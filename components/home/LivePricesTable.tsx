@@ -23,10 +23,16 @@ type SortConfig = {
     direction: 'asc' | 'desc';
 };
 
-const LivePricesTable = () => {
-    const [coins, setCoins] = useState<CoinMarketData[]>([]);
-    const [loading, setLoading] = useState(true);
+interface LivePricesTableProps {
+    initialCoins?: CoinMarketData[];
+    disableFetch?: boolean;
+}
+
+const LivePricesTable: React.FC<LivePricesTableProps> = ({ initialCoins = [], disableFetch = false }) => {
+    const [coins, setCoins] = useState<CoinMarketData[]>(initialCoins);
+    const [loading, setLoading] = useState(initialCoins.length === 0 && !disableFetch);
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState<'all' | 'gainers' | 'losers'>('all');
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'market_cap_rank', direction: 'asc' });
@@ -82,9 +88,7 @@ const LivePricesTable = () => {
             console.error("Failed to fetch markets data", error);
             if (!quiet) setError(error.message || "Failed to load market data");
             
-            // Auto-retry silently every 60s if failed
             if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
-            retryTimeoutRef.current = setTimeout(() => fetchCoins(true), 60000);
         } finally {
             if (!quiet) setLoading(false);
             setIsRefreshing(false);
@@ -92,8 +96,13 @@ const LivePricesTable = () => {
     };
 
     useEffect(() => {
-        fetchCoins();
-    }, []);
+        if (initialCoins.length === 0 && !disableFetch) {
+            fetchCoins();
+        } else {
+            // Setup base prices for flash animations when using initial data
+            initialCoins.forEach(coin => previousPricesRef.current[coin.id] = coin.current_price);
+        }
+    }, [initialCoins, disableFetch]);
 
     const handleSort = (key: keyof CoinMarketData) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -105,6 +114,20 @@ const LivePricesTable = () => {
 
     const sortedAndFilteredCoins = useMemo(() => {
         let result = [...coins];
+
+        // Apply tab filtering first
+        if (activeTab === 'gainers') {
+            result = result.filter(c => c.price_change_percentage_24h > 0);
+            // Default sort gainers by highest % if no specific sort is set
+            if (sortConfig.key === 'market_cap_rank') {
+                result.sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
+            }
+        } else if (activeTab === 'losers') {
+            result = result.filter(c => c.price_change_percentage_24h < 0);
+            if (sortConfig.key === 'market_cap_rank') {
+                result.sort((a, b) => a.price_change_percentage_24h - b.price_change_percentage_24h);
+            }
+        }
 
         if (searchQuery.trim()) {
             const lowerQuery = searchQuery.toLowerCase();
@@ -202,32 +225,48 @@ const LivePricesTable = () => {
 
     return (
         <div className="bg-card-bg/50 rounded-xl border border-border-color overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-border-color flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex flex-col">
-                    <h2 className="text-xl font-bold text-text-primary">Live Cryptocurrency Prices</h2>
-                    <div className="flex items-center gap-2 text-sm text-text-muted mt-1">
+            <div className="p-6 border-b border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex bg-white/5 p-1 rounded-lg border border-white/10 w-full md:w-auto overflow-x-auto">
+                    {(['all', 'gainers', 'losers'] as const).map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => { setActiveTab(tab); setCurrentPage(1); }}
+                            className={cn(
+                                "px-6 py-2 rounded-md text-sm font-medium transition-all capitalize whitespace-nowrap",
+                                activeTab === tab 
+                                    ? "bg-primary text-bg font-bold shadow" 
+                                    : "text-white/60 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            {tab === 'all' ? 'All Coins' : `Top ${tab}`}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="flex items-center gap-2 text-xs text-white/40 whitespace-nowrap hidden sm:flex">
                         <button 
                             onClick={() => fetchCoins()}
                             disabled={isRefreshing}
-                            className="flex items-center gap-1 hover:text-text-primary transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1 hover:text-primary transition-colors disabled:opacity-50"
                         >
                             <RefreshCw className={cn("h-3 w-3", isRefreshing && "animate-spin")} />
-                            {isRefreshing ? "Refreshing..." : "Refresh Now"}
+                            {isRefreshing ? "Refreshing" : "Refresh"}
                         </button>
                         <span>•</span>
-                        <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+                        <span>{lastUpdated.toLocaleTimeString()}</span>
                     </div>
-                </div>
 
-                <div className="relative w-[160px] focus-within:w-[280px] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted transition-colors focus-within:text-text-primary" />
-                    <input
-                        type="text"
-                        placeholder="Search coins..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-card-bg border border-border-color rounded-lg pl-9 pr-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-purple-500/50 transition-colors"
-                    />
+                    <div className="relative w-full md:w-[200px] focus-within:w-[280px] transition-all duration-300">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                        <input
+                            type="text"
+                            placeholder="Search cryptos..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-primary/50 transition-colors"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -344,14 +383,16 @@ const LivePricesTable = () => {
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 text-sm bg-dark-400 border border-purple-100/10 rounded-lg text-purple-100/70 hover:text-purple-100 disabled:opacity-30 transition-colors"
+                            aria-disabled={currentPage === 1 ? "true" : undefined}
+                            className="px-4 py-2 text-sm bg-bg-secondary border border-purple-100/10 rounded-lg text-purple-100/70 hover:text-purple-100 disabled:opacity-30 transition-colors"
                         >
                             Previous
                         </button>
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 text-sm bg-dark-400 border border-purple-100/10 rounded-lg text-purple-100/70 hover:text-purple-100 disabled:opacity-30 transition-colors"
+                            aria-disabled={currentPage === totalPages ? "true" : undefined}
+                            className="px-4 py-2 text-sm bg-bg-secondary border border-purple-100/10 rounded-lg text-purple-100/70 hover:text-purple-100 disabled:opacity-30 transition-colors"
                         >
                             Next
                         </button>

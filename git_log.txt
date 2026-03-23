@@ -1,0 +1,57 @@
+﻿commit 5e9eefcd98ae22b103420019284c8f0b65b1cc44
+Author: Rishirxt <rishi.ratheesh10@gmail.com>
+Date:   Wed Mar 18 11:37:09 2026 +0530
+
+    initial commit
+
+A	app/coins/[id]/page.tsx
+M	app/globals.css
+M	app/layout.tsx
+M	app/page.tsx
+A	build.log
+A	build_err.log
+A	build_out.log
+A	components/AnimatedCounter.tsx
+A	components/DataTable.tsx
+M	components/Header.tsx
+A	components/ThemeProvider.tsx
+A	components/ThemeToggle.tsx
+A	components/coins/CoinChart.tsx
+A	components/coins/WatchlistButton.tsx
+A	components/home/HeroStats.tsx
+A	components/home/LivePricesTable.tsx
+A	components/home/Watchlist.tsx
+A	components/home/coinoverview.tsx
+A	components/home/trendingcoins.tsx
+A	components/layout/CurrencySwitcher.tsx
+A	components/providers/CurrencyProvider.tsx
+A	components/providers/GlobalShortcuts.tsx
+A	components/ui/BackToTop.tsx
+A	components/ui/CoinIcon.tsx
+A	components/ui/EmptyState.tsx
+A	components/ui/button.tsx
+A	components/ui/dialog.tsx
+A	components/ui/select.tsx
+A	components/ui/table.tsx
+A	eslint.log
+A	eslint_compact.txt
+A	eslint_errors.txt
+A	eslint_report.json
+A	lib/coingecko.actions.ts
+M	lib/utils.ts
+M	next.config.ts
+M	package-lock.json
+M	package.json
+A	parse.js
+A	parsed_errs.txt
+A	tsc-errors.txt
+A	type.d.ts
+
+commit 65e77c238a7e568a93b1e9f30f1bedb724819850
+Merge: 408292f f03e81b
+Author: Rishi Ratheesh <rishi.ratheesh10@Gmail.com>
+Date:   Fri Jan 16 15:30:51 2026 +0530
+
+    Merge pull request #1 from Rishirxt/feat/navigation
+    
+    implement navigation

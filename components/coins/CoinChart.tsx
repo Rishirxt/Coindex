@@ -1,126 +1,156 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { fetcher } from '@/lib/coingecko.actions';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatCurrency } from '@/lib/utils';
-import { RefreshCw } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
-interface ChartProps {
-    coinId: string;
+interface CoinChartProps {
+  coinId: string;
+  initialData?: any[];
 }
 
-interface PricePoint {
-    date: string;
-    price: number;
-}
+type TimeRange = '1' | '7' | '30' | '365' | 'max';
 
-const CoinChart = ({ coinId }: ChartProps) => {
-    const [data, setData] = useState<PricePoint[]>([]);
-    const [loading, setLoading] = useState(true);
+const timeRanges: { label: string; value: TimeRange }[] = [
+  { label: '1D', value: '1' },
+  { label: '1W', value: '7' },
+  { label: '1M', value: '30' },
+  { label: '1Y', value: '365' },
+  { label: 'ALL', value: 'max' }
+];
 
-    useEffect(() => {
-        const fetchChartData = async () => {
-            setLoading(true);
-            try {
-                const response = await fetcher<{ prices: [number, number][] }>(`/coins/${coinId}/market_chart`, {
-                    vs_currency: 'usd',
-                    days: 7,
-                });
+export const CoinChart: React.FC<CoinChartProps> = ({ coinId, initialData }) => {
+  const [range, setRange] = useState<TimeRange>('1');
+  const [chartData, setChartData] = useState<any[]>(initialData || []);
+  const [loading, setLoading] = useState(!initialData || initialData.length === 0);
+  const [error, setError] = useState<string | null>(null);
 
-                const formattedData = response.prices.map(([timestamp, price]) => {
-                    const date = new Date(timestamp);
-                    return {
-                        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                        price: price,
-                        timestamp
-                    };
-                });
-
-                setData(formattedData);
-            } catch (error) {
-                console.error("Failed to fetch chart data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchChartData();
-    }, [coinId]);
-
-    if (loading) {
-        return (
-            <div className="w-full h-[400px] bg-card-bg rounded-xl border border-border-color animate-pulse flex flex-col items-center justify-center">
-                <RefreshCw className="h-8 w-8 text-text-muted animate-spin mb-4" />
-                <p className="text-text-muted">Loading chart data...</p>
-            </div>
-        );
-    }
-
-    if (data.length === 0) {
-        return (
-            <div className="w-full h-[400px] bg-card-bg rounded-xl border border-border-color flex items-center justify-center">
-                <p className="text-text-muted">Chart data unavailable</p>
-            </div>
-        );
-    }
-
-    const isPositive = data[data.length - 1].price >= data[0].price;
-    const color = isPositive ? '#22c55e' : '#ef4444';
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-card-bg border border-border-color p-3 rounded-lg shadow-xl">
-                    <p className="text-text-muted text-xs mb-1">{label}</p>
-                    <p className="text-text-primary font-bold">{formatCurrency(payload[0].value)}</p>
-                </div>
-            );
+  useEffect(() => {
+    let active = true;
+    const fetchChartUrl = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetcher<any>(`/coins/${coinId}/market_chart`, {
+          vs_currency: 'usd',
+          days: range,
+        });
+        
+        if (active && response.prices) {
+          const formatted = response.prices.map((item: [number, number]) => ({
+            time: item[0],
+            price: item[1]
+          }));
+          setChartData(formatted);
         }
-        return null;
+      } catch (err: any) {
+        if (active) setError('Failed to load chart data');
+      } finally {
+        if (active) setLoading(false);
+      }
     };
 
-    return (
-        <div className="w-full h-[400px] bg-card-bg/50 rounded-xl border border-border-color p-6 flex flex-col">
-            <h3 className="text-lg font-bold text-text-primary mb-6">Price History (7 Days)</h3>
-            <div className="flex-1 w-full min-h-0 text-text-muted">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={data}>
-                        <defs>
-                            <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-                                <stop offset="95%" stopColor={color} stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <XAxis
-                            dataKey="date"
-                            hide
-                        />
-                        <YAxis
-                            domain={['auto', 'auto']}
-                            tickFormatter={(value) => `$${value.toLocaleString()}`}
-                            stroke="currentColor"
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            width={80}
-                            className="opacity-50"
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Area
-                            type="monotone"
-                            dataKey="price"
-                            stroke={color}
-                            fillOpacity={1}
-                            fill="url(#colorPrice)"
-                            strokeWidth={2}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
-    );
-};
+    // If we have initialData and range is '1', skip fetch to save API call
+    if (range === '1' && initialData && initialData.length > 0 && chartData.length > 0) {
+      setLoading(false);
+      return;
+    }
 
-export default CoinChart;
+    fetchChartUrl();
+    return () => { active = false; };
+  }, [coinId, range]);
+
+  const formatDate = (timestamp: number) => {
+    const d = new Date(timestamp);
+    if (range === '1') {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-bg-primary border border-white/10 p-3 rounded-lg shadow-xl backdrop-blur-md">
+          <p className="text-white/50 text-xs mb-1">{formatDate(payload[0].payload.time)}</p>
+          <p className="text-white font-mono text-lg font-bold">
+            {formatCurrency(payload[0].value)}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const isPositive = chartData.length > 1 && chartData[chartData.length - 1].price >= chartData[0].price;
+  const strokeColor = isPositive ? 'var(--color-primary)' : 'var(--color-negative)';
+
+  return (
+    <div className="w-full glass-card p-4 sm:p-6 mb-8 flex flex-col h-[400px]">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-bold text-white">Price Chart</h3>
+        <div className="flex bg-white/5 rounded-lg border border-white/10 p-1">
+          {timeRanges.map(t => (
+            <button
+              key={t.value}
+              onClick={() => setRange(t.value)}
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
+                range === t.value ? 'bg-white/10 text-white shadow' : 'text-white/50 hover:text-white'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex-1 w-full relative">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-bg-primary/50 backdrop-blur-[2px] z-10 rounded-lg">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-negative">{error}</p>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={strokeColor} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={strokeColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="time" 
+                tickFormatter={formatDate} 
+                minTickGap={50}
+                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+                dy={10}
+              />
+              <YAxis 
+                domain={['auto', 'auto']} 
+                hide 
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area 
+                type="monotone" 
+                dataKey="price" 
+                stroke={strokeColor} 
+                strokeWidth={2}
+                fillOpacity={1} 
+                fill="url(#colorPrice)" 
+                isAnimationActive={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+    </div>
+  );
+};

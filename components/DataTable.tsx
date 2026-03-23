@@ -36,7 +36,7 @@ const DataTable = <T,>({ columns, data, rowKey, tableClassName, headerRowClassNa
         <TableRow className={cn('hover:bg-transparent!'
           , headerRowClassName)}>
           {columns.map((column, i) => (
-            <TableHead key={i} className={cn('bg-dark-400 text-purple-100 py-4 first:pl-5 last:pr-5')} scope="col">
+            <TableHead key={i} className={cn('bg-bg-secondary text-purple-100 py-4 first:pl-5 last:pr-5')} scope="col">
               {column.header}
             </TableHead>
           ))}

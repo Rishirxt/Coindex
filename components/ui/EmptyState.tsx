@@ -34,10 +34,10 @@ const EmptyState = ({ type, title, description, onRetry, className }: EmptyState
 
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center py-12 px-4 text-center bg-dark-400/20 rounded-xl border border-purple-100/5",
+      "flex flex-col items-center justify-center py-12 px-4 text-center bg-bg-secondary/20 rounded-xl border border-purple-100/5",
       className
     )}>
-      <div className="mb-4 p-4 bg-dark-400 rounded-full border border-purple-100/10 shadow-lg">
+      <div className="mb-4 p-4 bg-bg-secondary rounded-full border border-purple-100/10 shadow-lg">
         {icon}
       </div>
       <h3 className="text-xl font-bold text-text-primary mb-2">

@@ -4,140 +4,72 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-text-primary: var(--text-primary);
-  --color-text-muted: var(--text-muted);
-  --color-border-color: var(--border-color);
-  --color-card-bg: var(--card-bg);
-  --color-positive: var(--positive);
-  --color-negative: var(--negative);
-
-  /* Mapping dark palette to portfolio colors for compatibility */
-  --color-dark-400: var(--bg-secondary);
-  --color-dark-500: var(--bg-secondary);
-  --color-dark-600: var(--bg-primary);
-  --color-dark-900: var(--bg-primary);
-
-  /* Portfolio Color Palette Integration */
-  --color-primary-indigo: #6366f1;
-  --color-primary-purple: #8b5cf6;
-  --color-accent-pink: #ec4899;
-
-  /* Shadcn UI Color Mappings */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
+  --color-primary: #00D4AA;
+  --color-bg: #030712;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-muted: rgba(255, 255, 255, 0.45);
+  --color-subtle: rgba(255, 255, 255, 0.25);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: 1.25rem;
+  --color-background: var(--color-bg);
+  --color-foreground: #ffffff;
+  --color-card: var(--color-surface);
+  --color-card-foreground: #ffffff;
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: #ffffff;
+  --color-primary-foreground: #030712;
+  --color-secondary: rgba(255, 255, 255, 0.05);
+  --color-secondary-foreground: #ffffff;
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: rgba(255, 255, 255, 0.1);
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #F43F5E;
+  --color-input: var(--color-border);
+  --color-ring: var(--color-primary);
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
 }
 
 :root {
-  /* Common variables */
+  --color-primary: #00D4AA;
+  --color-bg: #030712;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-muted: rgba(255, 255, 255, 0.45);
+  --color-subtle: rgba(255, 255, 255, 0.25);
+  --gradient-primary: #00D4AA;
   --radius: 0.75rem;
-  --positive: #10b981;
-  --negative: #f43f5e;
-
-  /* Portfolio Gradients */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-
-  /* Light mode tokens (Portfolio White Theme) */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --card-bg: #ffffff;
-  --border-color: #e2e8f0;
-  --text-primary: #0f172a;
-  --text-muted: #64748b;
-
-  /* Shadcn UI Overrides for Light Mode */
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #6366f1;
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
 }
 
 .dark {
-  /* Dark mode tokens (Portfolio Dark Theme) */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --card-bg: #1e293b;
-  --border-color: #334155;
-  --text-primary: #f8fafc;
-  --text-muted: #94a3b8;
-
-  /* Shadcn UI Overrides for Dark Mode */
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: #1e293b;
-  --card-foreground: oklch(0.985 0 0);
-  --popover: #1e293b;
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #818cf8;
-  --primary-foreground: #0f172a;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.1);
-  --ring: #6366f1;
+  --color-primary: #00D4AA;
+  --color-bg: #030712;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-muted: rgba(255, 255, 255, 0.45);
+  --color-subtle: rgba(255, 255, 255, 0.25);
 }
 
 @layer base {
-  * {
+
+  a,
+  button,
+  input,
+  select {
     border-color: var(--border);
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
 
   body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    background-color: var(--color-bg) !important;
+    color: #ffffff !important;
   }
 }
 
-@layer utilities {
+@media (prefers-reduced-motion: no-preference) {
   @keyframes flash-green {
     0% {
       background-color: var(--color-positive);
@@ -206,6 +138,20 @@
     }
   }
 
+  @keyframes gradientShift {
+
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
+
+@layer utilities {
   .animate-flash-green {
     animation: flash-green 1s ease-out;
   }
@@ -234,18 +180,6 @@
     animation: draw-line 2s ease-out forwards;
   }
 
-  @keyframes gradientShift {
-
-    0%,
-    100% {
-      opacity: 0.8;
-    }
-
-    50% {
-      opacity: 0.5;
-    }
-  }
-
   .bw-background {
     position: fixed;
     inset: 0;
@@ -266,23 +200,23 @@
   }
 
   .logo-text {
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.5rem;
     line-height: 2rem;
-    letter-spacing: -0.05em;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    letter-spacing: -0.04em;
+    color: #ffffff;
     transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
   }
 }
 
 @layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+  }
+
   .container {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -348,7 +282,7 @@
 
   header {
     border-bottom-width: 1px;
-    border-color: var(--color-dark-400);
+    border-color: var(--bg-secondary);
     height: 5rem;
 
     .inner {
@@ -390,11 +324,7 @@
           color: white;
         }
 
-        .nav-link.is-home {
-          @media (max-width: 639px) {
-            display: none;
-          }
-        }
+
       }
     }
   }
@@ -403,7 +333,7 @@
     padding: 0.75rem;
     margin-top: 1.25rem;
     border-radius: 0.5rem;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
 
     .chart-header {
       display: flex;
@@ -442,7 +372,7 @@
       color: rgb(231, 225, 255);
 
       &:hover {
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
         color: white;
       }
 
@@ -455,8 +385,8 @@
       border-radius: 0.125rem;
       padding-left: 0.625rem;
       padding-right: 0.625rem;
-      padding-top: 0.375rem;
-      padding-bottom: 0.375rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
       border-width: 0px;
       cursor: pointer;
       font-size: 0.875rem;
@@ -484,6 +414,12 @@
     height: fit-content;
     position: relative;
     overflow: hidden;
+
+    &:focus-visible {
+      outline: none;
+      ring: 2px;
+      ring-color: rgb(168, 85, 247);
+    }
 
     &::before {
       content: '';
@@ -565,7 +501,7 @@
         justify-content: space-between;
 
         .label {
-          color: rgb(231, 225, 255);
+          color: rgb(216, 180, 254);
         }
 
         .value {
@@ -579,9 +515,9 @@
     padding-top: 2rem;
     margin-top: 1.25rem;
     width: 100%;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
-    overflow: hidden;
+    role: table;
 
     h4 {
       font-size: 1.25rem;
@@ -603,16 +539,20 @@
       display: flex;
       gap: 0.25rem;
       margin-right: 1.25rem;
+      role: cell;
 
       img {
         border-radius: 9999px;
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
+        width: 2rem;
+        height: 2rem;
       }
     }
 
     .change-header-cell {
       font-weight: 500;
+      role: columnheader;
     }
 
     .change-cell {
@@ -623,14 +563,17 @@
       padding-left: 0.5rem;
       text-align: center;
       font-weight: 500;
+      role: cell;
     }
 
     .market-cap-cell {
       font-weight: 500;
+      role: cell;
     }
 
     .volume-cell {
       font-weight: 500;
+      role: cell;
     }
   }
 
@@ -642,7 +585,7 @@
     height: 100%;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
 
     h4 {
@@ -658,7 +601,7 @@
     }
 
     .trending-coins-table {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       overflow: hidden;
 
       .name-cell {
@@ -760,7 +703,7 @@
     padding-top: 2rem;
     margin-top: 1.25rem;
     width: 100%;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
     overflow: hidden;
 
@@ -845,7 +788,7 @@
     height: 100%;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
 
     @media (min-width: 1280px) {
@@ -927,7 +870,7 @@
     height: 100%;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
 
     h4 {
@@ -943,7 +886,7 @@
     }
 
     .trending-coins-table {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       overflow: hidden;
 
       .name-cell {
@@ -1078,6 +1021,7 @@
     .secondary {
       width: 100%;
       height: 100%;
+      min-width: 280px;
 
       @media (max-width: 1023px) {
         margin-top: 2rem;
@@ -1107,7 +1051,7 @@
     }
 
     .exchange-table {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       border-radius: 0.75rem;
       overflow: hidden;
       margin-top: 1.25rem;
@@ -1120,6 +1064,7 @@
           position: absolute;
           inset: 0;
           z-index: 10;
+          aria-label: View exchange details;
         }
       }
 
@@ -1136,15 +1081,15 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          max-width: 5rem;
+          max-width: 7rem;
           height: 100%;
 
           @media (min-width: 768px) {
-            max-width: 7.5rem;
+            max-width: 9rem;
           }
         }
 
-        & > * + * {
+        &>*+* {
           margin-left: 0.5rem;
         }
       }
@@ -1198,7 +1143,7 @@
         li {
           font-size: 1rem;
           line-height: 1.5rem;
-          background-color: var(--color-dark-500);
+          background-color: var(--card-bg);
           padding-left: 1.25rem;
           padding-right: 1.25rem;
           padding-top: 1.5rem;
@@ -1257,7 +1202,7 @@
     }
 
     .coins-table {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       border-radius: 0.75rem;
       max-height: fit-content;
       overflow: hidden;
@@ -1365,7 +1310,7 @@
     }
 
     .dialog {
-      background-color: var(--color-dark-400) !important;
+      background-color: var(--bg-secondary);
       margin-left: auto;
       margin-right: auto;
       max-width: 24rem;
@@ -1377,10 +1322,14 @@
       @media (min-width: 768px) {
         max-width: 42rem;
       }
+
+      .dark & {
+        background-color: var(--bg-secondary);
+      }
     }
 
     .cmd-input {
-      background-color: var(--color-dark-500) !important;
+      background-color: var(--card-bg) !important;
 
       input {
         &::placeholder {
@@ -1390,8 +1339,8 @@
     }
 
     .list {
-      background-color: var(--color-dark-500);
-      max-height: 25rem;
+      background-color: var(--card-bg);
+      max-height: 50vh;
     }
 
     .heading {
@@ -1402,7 +1351,7 @@
     }
 
     .group {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       color: rgb(231, 225, 255);
     }
   }
@@ -1431,11 +1380,11 @@
       padding-bottom: 0.75rem;
 
       &[data-selected=true] {
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
       }
 
       &:hover {
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
       }
 
       .coin-info {
@@ -1506,7 +1455,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       padding-left: 1.25rem;
       padding-right: 1.25rem;
       padding-top: 1.75rem;
@@ -1515,7 +1464,7 @@
     }
 
     .input-wrapper {
-      background-color: var(--color-dark-400);
+      background-color: var(--bg-secondary);
       height: 3rem;
       width: 100%;
       border-radius: 0.375rem;
@@ -1526,12 +1475,17 @@
       padding-bottom: 1rem;
       padding-right: 1rem;
 
+      &:focus-within {
+        ring: 2px;
+        ring-color: rgb(34, 197, 94);
+      }
+
       .input {
         flex: 1 1 0%;
         font-size: 1.125rem !important;
         border-style: none;
         font-weight: 500;
-        background-color: var(--color-dark-400) !important;
+        background-color: var(--bg-secondary) !important;
         box-shadow: none;
         appearance: textfield;
 
@@ -1573,7 +1527,7 @@
         height: 1px;
         z-index: 10;
         width: 100%;
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
         position: absolute;
         top: 50%;
         left: 50%;
@@ -1584,15 +1538,16 @@
         width: 2rem;
         height: 2rem;
         z-index: 20;
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
         border-radius: 9999px;
         padding: 0.5rem;
         color: rgb(34, 197, 94);
+        aria-label: Swap currencies;
       }
     }
 
     .output-wrapper {
-      background-color: var(--color-dark-400);
+      background-color: var(--bg-secondary);
       height: 3rem;
       width: 100%;
       border-radius: 0.375rem;
@@ -1614,10 +1569,10 @@
         border-style: none !important;
         cursor: pointer !important;
         height: 3rem !important;
-        background-color: var(--color-dark-400) !important;
+        background-color: var(--bg-secondary) !important;
 
         &:hover {
-          background-color: var(--color-dark-400) !important;
+          background-color: var(--bg-secondary) !important;
         }
 
         &:focus-visible {
@@ -1632,14 +1587,14 @@
       }
 
       .select-content[data-converter] {
-        background-color: var(--color-dark-400);
+        background-color: var(--bg-secondary);
         max-height: 31.25rem;
 
         .select-item {
           cursor: pointer;
 
           &:hover {
-            background-color: var(--color-dark-500) !important;
+            background-color: var(--card-bg) !important;
           }
         }
       }
@@ -1656,7 +1611,7 @@
       padding: 0.25rem !important;
       background-color: transparent !important;
       border-bottom-width: 1px !important;
-      border-color: var(--color-dark-500) !important;
+      border-color: var(--card-bg) !important;
       border-radius: 0px !important;
     }
 
@@ -1739,6 +1694,9 @@
         font-size: 1.875rem;
         line-height: 2.25rem;
         font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
         @media (min-width: 640px) {
           font-size: 3rem;
@@ -1758,6 +1716,8 @@
       margin-top: 2rem;
       gap: 1rem;
       width: fit-content;
+      divide-x: 1px;
+      divide-color: rgb(147, 51, 234);
 
       @media (min-width: 640px) {
         gap: 1.5rem;
@@ -1766,15 +1726,9 @@
       li {
         font-size: 1rem;
         line-height: 1.5rem;
-        border-right-width: 1px;
-        border-color: rgb(147, 51, 234);
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-
-        &:last-child {
-          border-right-width: 0px;
-        }
 
         .label {
           color: rgb(231, 225, 255);
@@ -1803,7 +1757,7 @@
     height: 100%;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    background-color: var(--color-dark-500);
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
 
     @media (min-width: 1280px) {
@@ -1868,7 +1822,7 @@
     }
 
     .pagination-control {
-      background-color: var(--color-dark-400);
+      background-color: var(--bg-secondary);
       border-radius: 0.125rem;
       padding-top: 0.25rem;
       padding-bottom: 0.25rem;
@@ -1889,6 +1843,7 @@
     .control-disabled {
       pointer-events: none;
       opacity: 0.5;
+      aria-disabled: true;
     }
 
     .pagination-pages {
@@ -1913,13 +1868,13 @@
         cursor: pointer;
 
         &:hover {
-          background-color: var(--color-dark-400) !important;
+          background-color: var(--bg-secondary) !important;
         }
       }
 
       .page-link-active {
         background-color: rgb(34, 197, 94) !important;
-        color: var(--color-dark-900);
+        color: #0f1117;
         font-weight: 600;
       }
     }
@@ -1974,7 +1929,7 @@
     }
 
     .trades-table {
-      background-color: var(--color-dark-500);
+      background-color: var(--card-bg);
       margin-top: 1.25rem;
       border-radius: 0.75rem;
       overflow: hidden;
@@ -2026,6 +1981,11 @@
   background: #171a34;
 }
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1e2833 transparent;
+}
+
 /* Table Custom Scrollbar */
 .custom-scrollbar [data-slot='table-container'] {
   overflow-y: auto;
@@ -2047,4 +2007,34 @@
 
 .custom-scrollbar [data-slot='table-container']::-webkit-scrollbar-thumb:hover {
   background: #171a34;
+}
+
+.glass-card {
+  background: var(--color-surface);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+}
+
+.glass-card-collapsed {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee 35s linear infinite;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
